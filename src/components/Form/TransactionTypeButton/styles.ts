@@ -14,18 +14,13 @@ interface ContainerProps {
   type: FormTransactionTypes;
 }
 
-export const Container = styled(RectButton)<ContainerProps>`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+export const Container = styled.View<ContainerProps>`
   width: 48%;
 
   border-width: ${({ isSelected }) => (isSelected ? 0 : 1.5)}px;
   border-style: solid;
   border-color: ${({ theme }) => theme.colors.text};
   border-radius: 4px;
-
-  padding: 16px;
 
   ${({ isSelected, type }) =>
     isSelected &&
@@ -40,6 +35,14 @@ export const Container = styled(RectButton)<ContainerProps>`
     css`
       background-color: ${({ theme }) => theme.colors.success_light};
     `}
+`;
+
+export const Button = styled(RectButton)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
 `;
 
 export const Title = styled.Text`

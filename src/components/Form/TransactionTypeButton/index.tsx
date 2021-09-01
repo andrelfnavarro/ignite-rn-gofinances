@@ -1,11 +1,11 @@
 import React from 'react';
-import { RectButtonProperties } from 'react-native-gesture-handler';
+import { RectButtonProps } from 'react-native-gesture-handler';
 
-import { Container, Title, Icon } from './styles';
+import { Container, Title, Icon, Button } from './styles';
 
 export type FormTransactionTypes = 'up' | 'down';
 
-interface Props extends RectButtonProperties {
+interface Props extends RectButtonProps {
   title: string;
   type: FormTransactionTypes;
   isSelected: boolean;
@@ -23,9 +23,11 @@ export function TransactionTypeButton({
   ...rest
 }: Props) {
   return (
-    <Container type={type} isSelected={isSelected} {...rest}>
-      <Icon type={type} name={icons[type]} />
-      <Title>{title}</Title>
+    <Container type={type} isSelected={isSelected}>
+      <Button {...rest}>
+        <Icon type={type} name={icons[type]} />
+        <Title>{title}</Title>
+      </Button>
     </Container>
   );
 }
