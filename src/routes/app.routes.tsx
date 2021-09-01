@@ -4,7 +4,7 @@ import { Dashboard } from '../screens/Dashboard';
 import { Register } from '../screens/Register';
 import { useTheme } from 'styled-components';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
+// import { Platform } from 'react-native';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 

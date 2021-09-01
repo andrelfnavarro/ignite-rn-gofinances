@@ -1,11 +1,11 @@
 import React from 'react';
-import { TouchableOpacityProps } from 'react-native';
+import { RectButtonProperties } from 'react-native-gesture-handler';
 
 import { Container, Title, Icon } from './styles';
 
 export type FormTransactionTypes = 'up' | 'down';
 
-interface Props extends TouchableOpacityProps {
+interface Props extends RectButtonProperties {
   title: string;
   type: FormTransactionTypes;
   isSelected: boolean;

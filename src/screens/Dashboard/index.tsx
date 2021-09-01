@@ -1,4 +1,5 @@
 import React from 'react';
+import { BorderlessButton } from 'react-native-gesture-handler';
 
 import { HighlightCard } from '../../components/HighlightCard';
 import {
@@ -70,7 +71,9 @@ export function Dashboard() {
             </User>
           </UserInfo>
 
-          <LogoutIcon name="power" />
+          <BorderlessButton onPress={() => console.warn(1)}>
+            <LogoutIcon name="power" />
+          </BorderlessButton>
         </UserWrapper>
       </Header>
 

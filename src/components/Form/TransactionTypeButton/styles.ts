@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/native';
-import { TouchableOpacity } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Feather } from '@expo/vector-icons';
 
 import { FormTransactionTypes } from './index';
+import { RectButton } from 'react-native-gesture-handler';
 
 interface IconProps {
   type: FormTransactionTypes;
@@ -14,7 +14,7 @@ interface ContainerProps {
   type: FormTransactionTypes;
 }
 
-export const Container = styled(TouchableOpacity)<ContainerProps>`
+export const Container = styled(RectButton)<ContainerProps>`
   flex-direction: row;
   align-items: center;
   justify-content: center;
