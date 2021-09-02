@@ -24,14 +24,14 @@ export const Container = styled.View<ContainerProps>`
 
   ${({ isSelected, type }) =>
     isSelected &&
-    type === 'down' &&
+    type === 'negative' &&
     css`
       background-color: ${({ theme }) => theme.colors.attention_light};
     `}
 
   ${({ isSelected, type }) =>
     isSelected &&
-    type === 'up' &&
+    type === 'positive' &&
     css`
       background-color: ${({ theme }) => theme.colors.success_light};
     `}
@@ -55,5 +55,5 @@ export const Icon = styled(Feather)<IconProps>`
   margin-right: 12px;
 
   color: ${({ theme, type }) =>
-    type === 'up' ? theme.colors.success : theme.colors.attention};
+    type === 'positive' ? theme.colors.success : theme.colors.attention};
 `;
