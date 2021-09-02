@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from 'react-native';
 import { useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 
 import { Button } from '../../components/Form/Button';
 import { CategorySelectButton } from '../../components/Form/CategorySelectButton';
@@ -34,6 +37,8 @@ const schema = Yup.object().shape({
     .positive('O valor não pode ser negativo'),
 });
 
+const dataKey = '@gofinances:transactions';
+
 export function Register() {
   const [category, setCategory] = useState({
     key: 'category',
@@ -47,8 +52,11 @@ export function Register() {
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
+
+  const navigation = useNavigation();
 
   const handleSelectTransactionType = (type: FormTransactionTypes) => {
     setTransactionType(type);
@@ -62,7 +70,7 @@ export function Register() {
     setCategoryModalOpen(true);
   };
 
-  const handleRegister = (form: FormData) => {
+  const handleRegister = async (form: FormData) => {
     if (!transactionType) {
       return Alert.alert('Selecione o tipo da transação');
     }
@@ -71,13 +79,39 @@ export function Register() {
       return Alert.alert('Selecione a categoria');
     }
 
-    const data = {
+    const newTransaction = {
+      id: String(uuid.v4()),
       ...form,
       transactionType,
       category: category.key,
+      date: new Date(),
     };
 
-    console.log(data);
+    try {
+      const storedData = await AsyncStorage.getItem(dataKey);
+      const currentData = storedData ? JSON.parse(storedData) : [];
+
+      const formattedData = [...currentData, newTransaction];
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(formattedData));
+
+      reset();
+
+      setTransactionType('');
+      setCategory({
+        key: 'category',
+        name: 'Categoria',
+      });
+
+      navigation.dispatch(
+        CommonActions.navigate({
+          name: 'Listagem',
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Não foi possível registrar');
+    }
   };
 
   return (
