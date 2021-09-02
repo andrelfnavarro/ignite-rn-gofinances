@@ -82,7 +82,7 @@ export function Register() {
     const newTransaction = {
       id: String(uuid.v4()),
       ...form,
-      transactionType,
+      type: transactionType,
       category: category.key,
       date: new Date(),
     };
@@ -141,16 +141,16 @@ export function Register() {
 
             <TransactionTypes>
               <TransactionTypeButton
-                type="up"
+                type="positive"
                 title="Income"
-                isSelected={transactionType === 'up'}
-                onPress={() => handleSelectTransactionType('up')}
+                isSelected={transactionType === 'positive'}
+                onPress={() => handleSelectTransactionType('positive')}
               />
               <TransactionTypeButton
-                type="down"
+                type="negative"
                 title="Outcome"
-                isSelected={transactionType === 'down'}
-                onPress={() => handleSelectTransactionType('down')}
+                isSelected={transactionType === 'negative'}
+                onPress={() => handleSelectTransactionType('negative')}
               />
             </TransactionTypes>
 
