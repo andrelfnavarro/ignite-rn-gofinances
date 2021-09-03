@@ -1,11 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback } from 'react';
+import { useRef } from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { BorderlessButton } from 'react-native-gesture-handler';
 import { useTheme } from 'styled-components';
+import { FormTransactionTypes } from '../../components/Form/TransactionTypeButton';
 
 import { HighlightCard } from '../../components/HighlightCard';
 import {
@@ -35,6 +37,7 @@ export interface TransactionsListDataProps extends TransactionCardProps {
 
 interface Highlight {
   amount: string;
+  lastTransaction: string;
 }
 
 interface HighlightsDataProps {
@@ -53,6 +56,26 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const theme = useTheme();
+  const componentJustMounted = useRef(true);
+
+  const getLastTransactionDate = (
+    collection: TransactionsListDataProps[],
+    type: FormTransactionTypes
+  ) => {
+    const lastTransactionDate = new Date(
+      Math.max.apply(
+        Math,
+        collection
+          .filter(transaction => transaction.type === type)
+          .map(transaction => new Date(transaction.date).getTime())
+      )
+    );
+
+    return `${lastTransactionDate.toLocaleDateString('pt-BR', {
+      month: 'long',
+      day: '2-digit',
+    })} `;
+  };
 
   const loadStoredTransactions = async () => {
     const dataKey = '@gofinances:transactions';
@@ -91,6 +114,16 @@ export function Dashboard() {
 
     setTransactions(transactionsFormatted);
 
+    const lastEntriesTransaction = getLastTransactionDate(
+      transactions,
+      'positive'
+    );
+    const lastExpensesTransaction = getLastTransactionDate(
+      transactions,
+      'negative'
+    );
+    const totalInterval = `01 a ${lastExpensesTransaction}`;
+
     const total = entriesAmount - expensesAmount;
 
     setHighlightsData({
@@ -99,18 +132,21 @@ export function Dashboard() {
           style: 'currency',
           currency: 'BRL',
         }),
+        lastTransaction: `Última entrada dia ${lastEntriesTransaction}`,
       },
       expenses: {
         amount: expensesAmount.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         }),
+        lastTransaction: `última saída dia ${lastExpensesTransaction}`,
       },
       total: {
         amount: total.toLocaleString('pt-BR', {
           style: 'currency',
           currency: 'BRL',
         }),
+        lastTransaction: totalInterval,
       },
     });
 
@@ -123,7 +159,11 @@ export function Dashboard() {
 
   useFocusEffect(
     useCallback(() => {
-      loadStoredTransactions();
+      if (!componentJustMounted.current) {
+        loadStoredTransactions();
+      }
+
+      componentJustMounted.current = false;
     }, [])
   );
 
@@ -161,19 +201,19 @@ export function Dashboard() {
               type="up"
               title="Entradas"
               amount={highlightsData.entries.amount}
-              lastTransaction="Última entrada dia 13 de abril"
+              lastTransaction={highlightsData.entries.lastTransaction}
             />
             <HighlightCard
               type="down"
               title="Saídas"
               amount={highlightsData.expenses.amount}
-              lastTransaction="Última saída dia 13 de abril"
+              lastTransaction={highlightsData.expenses.lastTransaction}
             />
             <HighlightCard
               type="total"
               title="Total"
               amount={highlightsData.total.amount}
-              lastTransaction="01 à 06 de abril"
+              lastTransaction={highlightsData.total.lastTransaction}
             />
           </HightlightCardList>
 
