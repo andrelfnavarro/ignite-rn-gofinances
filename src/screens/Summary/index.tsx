@@ -1,13 +1,25 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VictoryPie } from 'victory-native';
-
-import { HistoryCard } from '../../components/HistoryCard';
-import { Container, Header, Title, Content, ChartContainer } from './styles';
-import { categories } from '../../utils/categories';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components';
 import { useFocusEffect } from '@react-navigation/core';
+
+import { HistoryCard } from '../../components/HistoryCard';
+import {
+  Container,
+  Header,
+  Title,
+  Content,
+  ChartContainer,
+  Month,
+  MonthSelect,
+  MonthSelectIcon,
+  MonthSelectButton,
+} from './styles';
+import { categories } from '../../utils/categories';
+import { addMonths, format, subMonths } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface TransactionData {
   type: 'positive' | 'negative';
@@ -29,12 +41,23 @@ interface CategoryData {
 const dataKey = '@gofinances:transactions';
 
 export function Summary() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>(
     []
   );
 
   const theme = useTheme();
   const componentJustMounted = useRef(true);
+
+  const handleMonthChange = (action: 'next' | 'previous') => {
+    if (action === 'next') {
+      setSelectedDate(addMonths(selectedDate, 1));
+    } else {
+      setSelectedDate(subMonths(selectedDate, 1));
+    }
+
+    console.log(selectedDate);
+  };
 
   const loadData = async () => {
     const storedData = await AsyncStorage.getItem(dataKey);
@@ -43,7 +66,10 @@ export function Summary() {
     console.log(currentData);
 
     const expenses = currentData.filter(
-      (expense: TransactionData) => expense.type === 'negative'
+      (expense: TransactionData) =>
+        expense.type === 'negative' &&
+        new Date(expense.date).getMonth() === selectedDate.getMonth() &&
+        new Date(expense.date).getFullYear() === selectedDate.getFullYear()
     );
 
     const expensesTotal = expenses.reduce(
@@ -86,7 +112,7 @@ export function Summary() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [selectedDate]);
 
   useFocusEffect(
     useCallback(() => {
@@ -104,6 +130,18 @@ export function Summary() {
         <Title>Resumo por categoria</Title>
       </Header>
 
+      <MonthSelect>
+        <MonthSelectButton onPress={() => handleMonthChange('previous')}>
+          <MonthSelectIcon name="chevron-left" />
+        </MonthSelectButton>
+
+        <Month>{format(selectedDate, 'MMMM, yyyy', { locale: ptBR })}</Month>
+
+        <MonthSelectButton onPress={() => handleMonthChange('next')}>
+          <MonthSelectIcon name="chevron-right" />
+        </MonthSelectButton>
+      </MonthSelect>
+
       <ChartContainer>
         <VictoryPie
           colorScale={totalByCategories.map(category => category.color)}
@@ -120,7 +158,14 @@ export function Summary() {
           }}
         />
       </ChartContainer>
-      <Content>
+
+      <Content
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingBottom: 24,
+        }}
+      >
         {totalByCategories.map(item => (
           <HistoryCard
             key={item.key}
