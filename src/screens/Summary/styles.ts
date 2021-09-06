@@ -52,3 +52,9 @@ export const MonthSelectIcon = styled(Feather)`
 `;
 
 export const MonthSelectButton = styled(BorderlessButton)``;
+
+export const LoaderContainer = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
