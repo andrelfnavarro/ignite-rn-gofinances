@@ -60,15 +60,11 @@ export function Summary() {
     } else {
       setSelectedDate(subMonths(selectedDate, 1));
     }
-
-    console.log(selectedDate);
   };
 
   const loadData = async () => {
     const storedData = await AsyncStorage.getItem(dataKey);
     const currentData = storedData ? JSON.parse(storedData) : [];
-
-    console.log(currentData);
 
     const expenses = currentData.filter(
       (expense: TransactionData) =>
@@ -83,8 +79,6 @@ export function Summary() {
       },
       0
     );
-
-    console.log(expensesTotal);
 
     const totalByCategory: CategoryData[] = [];
 
