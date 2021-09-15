@@ -24,6 +24,7 @@ import {
   Fields,
   TransactionTypes,
 } from './styles';
+import { useAuth } from '../../hooks/auth';
 
 interface FormData {
   name: string;
@@ -37,8 +38,6 @@ const schema = Yup.object().shape({
     .positive('O valor não pode ser negativo')
     .required('Valor é obrigatório'),
 });
-
-const dataKey = '@gofinances:transactions';
 
 export function Register() {
   const [category, setCategory] = useState({
@@ -58,6 +57,7 @@ export function Register() {
   } = useForm({ resolver: yupResolver(schema) });
 
   const navigation = useNavigation();
+  const { user } = useAuth();
 
   const handleSelectTransactionType = (type: FormTransactionTypes) => {
     setTransactionType(type);
@@ -89,6 +89,7 @@ export function Register() {
     };
 
     try {
+      const dataKey = `@gofinances:transactions_user:${user.id}`;
       const storedData = await AsyncStorage.getItem(dataKey);
       const currentData = storedData ? JSON.parse(storedData) : [];
 

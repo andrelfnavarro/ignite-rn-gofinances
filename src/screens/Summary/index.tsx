@@ -22,6 +22,7 @@ import {
   LoaderContainer,
 } from './styles';
 import { categories } from '../../utils/categories';
+import { useAuth } from '../../hooks/auth';
 
 interface TransactionData {
   type: 'positive' | 'negative';
@@ -40,8 +41,6 @@ interface CategoryData {
   percentage: string;
 }
 
-const dataKey = '@gofinances:transactions';
-
 export function Summary() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -50,6 +49,7 @@ export function Summary() {
   );
 
   const theme = useTheme();
+  const { user } = useAuth();
   const componentJustMounted = useRef(true);
 
   const handleMonthChange = (action: 'next' | 'previous') => {
@@ -63,6 +63,8 @@ export function Summary() {
   };
 
   const loadData = async () => {
+    const dataKey = `@gofinances:transactions_user:${user.id}`;
+
     const storedData = await AsyncStorage.getItem(dataKey);
     const currentData = storedData ? JSON.parse(storedData) : [];
 
