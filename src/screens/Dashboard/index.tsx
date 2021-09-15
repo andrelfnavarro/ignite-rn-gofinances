@@ -14,6 +14,7 @@ import {
   TransactionCard,
   TransactionCardProps,
 } from '../../components/TransactionCard';
+import { useAuth } from '../../hooks/auth';
 import {
   Container,
   Header,
@@ -57,6 +58,8 @@ export function Dashboard() {
 
   const theme = useTheme();
   const componentJustMounted = useRef(true);
+
+  const { user, signOut } = useAuth();
 
   const getLastTransactionDate = (
     collection: TransactionsListDataProps[],
@@ -180,17 +183,17 @@ export function Dashboard() {
               <UserInfo>
                 <Photo
                   source={{
-                    uri: 'https://avatars.githubusercontent.com/u/32081314?v=4',
+                    uri: user.photo,
                   }}
                 />
 
                 <User>
                   <UserGreeting>Olá,</UserGreeting>
-                  <UserName>André</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
 
-              <BorderlessButton onPress={() => console.warn(1)}>
+              <BorderlessButton onPress={signOut}>
                 <LogoutIcon name="power" />
               </BorderlessButton>
             </UserWrapper>

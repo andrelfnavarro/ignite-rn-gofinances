@@ -17,7 +17,7 @@ import theme from './src/global/styles/theme';
 import { Routes } from './src/routes';
 import { StatusBar } from 'react-native';
 import { SignIn } from './src/screens/SignIn';
-import { AuthProvider } from './src/hooks/auth';
+import { AuthProvider, useAuth } from './src/hooks/auth';
 
 export default function App() {
   const [fontsHaveLoaded] = useFonts({
@@ -26,7 +26,9 @@ export default function App() {
     Poppins_700Bold,
   });
 
-  if (!fontsHaveLoaded) {
+  const { loadingStoredUser } = useAuth();
+
+  if (!fontsHaveLoaded || loadingStoredUser) {
     return <AppLoading />;
   }
 
