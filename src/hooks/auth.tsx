@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import * as AuthSession from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,8 +31,22 @@ interface AuthContextData {
 
 const AuthContext = createContext({} as AuthContextData);
 
+const userStorageKey = '@gofinances:user';
+
 const AuthProvider = ({ children }: ProviderProps) => {
   const [user, setUser] = useState<User>({} as User);
+
+  useEffect(() => {
+    const loadStoredUserData = async () => {
+      const storedUser = await AsyncStorage.getItem(userStorageKey);
+      if (storedUser) {
+        const parsedStoredUser = JSON.parse(storedUser);
+        setUser(parsedStoredUser);
+      }
+    };
+
+    loadStoredUserData();
+  }, []);
 
   const signInWithGoogle = async () => {
     try {
@@ -54,10 +74,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
 
         setUser(userLogged);
 
-        await AsyncStorage.setItem(
-          '@gofinances:user',
-          JSON.stringify(userLogged)
-        );
+        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
       }
     } catch (error) {
       throw new Error('Error while logging into Google service.');
@@ -82,10 +99,7 @@ const AuthProvider = ({ children }: ProviderProps) => {
         };
         setUser(userLogged);
 
-        await AsyncStorage.setItem(
-          '@gofinances:user',
-          JSON.stringify(userLogged)
-        );
+        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged));
       }
     } catch (error) {
       throw new Error('Error while logging into Apple service.');
