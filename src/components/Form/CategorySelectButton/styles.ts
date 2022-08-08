@@ -3,9 +3,7 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { Feather } from '@expo/vector-icons';
 import { RectButton } from 'react-native-gesture-handler';
 
-export const Container = styled(RectButton).attrs({
-  activeOpacity: 0.7,
-})`
+export const Container = styled(RectButton)`
   width: 100%;
   padding: 16px;
 

@@ -1,6 +1,4 @@
-import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-
 import { AuthProvider, useAuth } from './auth';
 
 jest.mock('expo-auth-session', () => {
@@ -36,6 +34,6 @@ describe('Hooks/Auth', () => {
 
     await act(() => result.current.signInWithGoogle());
 
-    expect(result.current.user).toBeTruthy();
+    expect(result.current.user.email).toBe('userInfo.email');
   });
 });
