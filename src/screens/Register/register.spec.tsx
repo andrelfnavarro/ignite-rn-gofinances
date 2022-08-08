@@ -24,6 +24,8 @@ describe('Screens/Register', () => {
 
     fireEvent.press(getByTestId('category-select-button'));
 
-    expect(categoryModal.props.visible).toBeTruthy();
+    await waitFor(() => {
+      expect(categoryModal.props.visible).toBe(true);
+    });
   });
 });
